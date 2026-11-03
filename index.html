@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>C&amp;I Consumers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./Project-Library-Dashboard.css">
+  <link rel="stylesheet" href="./ask-ci.css">
+</head>
+
+<body>
+  <script src="./common.js"></script>
+  <script src="./search-modal.js"></script>
+  <script src="./upgrade-modal.js"></script>
+  <script src="./my-lists.js"></script>
+  <script src="./ask-ci.js"></script>
+  <script src="./filter-config.js"></script>
+  <script src="./advanced-filter.js"></script>
+  <script>
+    const section0 = currentSection();
+    initShell({ active: section0, onNavigate: id => openSection(id) });
+    AdvancedFilter.mount({ section: section0, onChange: () => { state.limit = PAGE; renderContent(); } });
+    if (typeof MyLists !== "undefined") MyLists.mount({
+      current: () => state.section, goto: id => openSection(id), rerender: () => mount(),
+      companies: ids => ids.map(id => state.items.find(i => String(i.id) === String(id))).filter(Boolean), card: i => ItemCard(i), loading: () => state.loading
+    });
+    else console.warn("my-lists.js was not loaded, so the My Lists pages are unavailable. Check that it sits next to index.html.");
+
+    /* ---------- State ---------- */
+    const PAGE = 6;
+    const state = { section: section0, viewMode: "grid", query: "", type: "All", sort: "name-asc", loading: true, error: null, limit: PAGE, items: [] };
+    const SKEY = "ec-list-state";
+    function saveState() { try { sessionStorage.setItem(SKEY, JSON.stringify({ q: state.query, type: state.type, sort: state.sort, view: state.viewMode, limit: state.limit, y: window.scrollY })); } catch (e) { } }
+    function restoreState() { try { const s = JSON.parse(sessionStorage.getItem(SKEY) || "null"); if (s) { state.query = s.q; state.type = s.type; state.sort = s.sort; state.viewMode = s.view; state.limit = s.limit; state.y = s.y; } } catch (e) { } }
+    window.addEventListener("pagehide", saveState);
+
+    const actionBtn = i => `<button class="icon-btn" data-action="${i.id}" aria-label="Actions for ${esc(i.name)}">${icon("more")}</button>`;
+
+    function getVisible() {
+      const q = state.query.trim().toLowerCase();
+      let r = state.items.filter(i =>
+        (state.type === "All" || i.ciType === state.type) &&
+        advancedMatch(i) &&
+        (!q || [i.name, i.group, i.companyType, i.ciType, i.vertical, i.city, i.description, i.address, i.esg].some(f => String(f ?? "").toLowerCase().includes(q))));
+      const [k, dir] = state.sort.split("-");
+      r.sort((a, b) => { const x = k === "name" ? a.name.localeCompare(b.name) : (a.year || 0) - (b.year || 0); return dir === "asc" ? x : -x });
+      return r;
+    }
+
+    /* ---------- Components ---------- */
+    /* Sections (pages) that do NOT show the banner. "*" at the end matches a prefix. Example: ["ask", "feed", "people"].
+       (My Lists and saved list pages never show it.) */
+    const BANNERLESS_SECTIONS = [];
+    const bannerHidden = id => sectionIn(BANNERLESS_SECTIONS, id);
+
+    /* Edit these 3 stats (number + short name) */
+    const BANNER_STATS = [
+      { value: "1,248", label: "Consumers" },
+      { value: "36", label: "Discoms" },
+      { value: "214", label: "C&I Clusters" }
+    ];
+
+    const Banner = () => `
+  <section class="banner" aria-labelledby="bn">
+    <div class="banner-body">
+      <h1 id="bn">Every C&amp;I consumer, one place to look</h1>
+      <p>Explore commercial and industrial energy consumers by geography, discom and cluster. Compare ESG mandates, multi-facility potential and key locations at a glance.</p>
+      
+      <ul class="banner-stats" aria-label="Key numbers">
+        ${BANNER_STATS.map(s => `<li class="stat"><b>${esc(s.value)}</b><span>${esc(s.label)}</span></li>`).join("")}
+      </ul>
+    </div>
+  </section>`;
+
+    const ViewToggle = () => `
+  <div class="toggle" role="group" aria-label="View mode">
+    <button data-view="grid" aria-pressed="${state.viewMode === "grid"}">${icon("grid")}Grid</button>
+    <button data-view="list" aria-pressed="${state.viewMode === "list"}">${icon("list")}List</button>
+  </div>`;
+
+    const Search = () => `
+  <label class="field"><span class="sr">Search consumers</span>${icon("search")}
+    <input class="input" id="q" type="search" placeholder="Search company, city, vertical, address" value="${esc(state.query)}" autocomplete="off"></label>`;
+
+    const Filters = () => `
+  <label><span class="sr">Filter by C&amp;I type</span><select class="select" id="type">
+    ${[["All", "All C&I types"], ["Commercial", "Commercial"], ["Industrial", "Industrial"]].map(([v, l]) => `<option value="${v}" ${v === state.type ? "selected" : ""}>${l}</option>`).join("")}
+  </select></label>
+  <label><span class="sr">Sort</span><select class="select" id="sort">
+    ${[["name-asc", "Name A–Z"], ["name-desc", "Name Z–A"], ["year-asc", "Oldest established"], ["year-desc", "Newest established"]].map(([v, l]) => `<option value="${v}" ${v === state.sort ? "selected" : ""}>${l}</option>`).join("")}
+  </select></label>`;
+
+    const SECTION_DESC = "Commercial and industrial energy consumers across India.";
+    const DashboardHeader = () => `
+  <header class="head${bannerHidden(state.section) ? " head--first" : ""}">
+    <div><h2>${esc(sectionLabel(state.section))}</h2><p class="sub">${state.section === "entities" ? SECTION_DESC : "This section's data isn't connected yet."}</p></div>
+    ${state.section === "entities" ? `<div class="tools">${Search()}${Filters()}<span id="vt">${ViewToggle()}</span></div>` : ""}
+  </header>`;
+
+    /* star (Watchlist) + "Add to list" buttons; empty if my-lists.js is not loaded */
+    const listActions = i => typeof MyLists !== "undefined" ? MyLists.actionsHtml(i.id, i.name) : "";
+
+    const ItemCard = i => `
+  <article class="card" data-open="${esc(i.id)}">
+    <div class="card-top">${thumb(i)}<div class="right">${i.ciType ? ciBadge(i.ciType) : ""}${listActions(i)}${actionBtn(i)}</div></div>
+    <h3><a class="card-link" href="${detailsUrl(i)}">${esc(i.name)}</a></h3>
+    <p class="group">Parent: ${val(i.group)}</p>
+    <p class="desc">${esc(i.description)}</p>
+    <div class="tags">${i.vertical ? `<span class="tag">${esc(i.vertical)}</span>` : ""}</div>
+    <dl class="kv">
+      <div><dt>Global ESG mandate</dt><dd>${i.esg ? esgBadge(i.esg) : NA}</dd></div>
+      <div><dt>Multi-facility potential</dt><dd>${i.multi == null ? NA : yn(i.multi)}</dd></div>
+      <div><dt>Company type</dt><dd>${val(i.companyType)}</dd></div>
+      <div><dt>Established</dt><dd>${val(i.year)}</dd></div>
+      <div><dt>Location</dt><dd>${icon("pin")}${val(i.city)}</dd></div>
+      <div><dt>Contacts</dt><dd>${icon("users")}${i.contacts}</dd></div>
+    </dl>
+    <div class="loc">
+      <div class="loc-head"><span class="coords">${coords(i)}</span>${mapLink(i)}</div>
+      <p class="addr">${val(i.address)}</p>
+    </div>
+  </article>`;
+
+    const GridView = items => `<div class="grid">${items.map(ItemCard).join("")}</div>`;
+
+    const ItemTable = items => `
+  <div class="table-wrap" tabindex="0" role="region" aria-label="C&amp;I consumers table">
+    <table>
+      <thead><tr><th>Company</th><th>C&amp;I type</th><th>C&amp;I vertical</th><th>Company type</th><th>Location</th><th>ESG mandate</th><th>Multi-facility</th><th>Contacts</th><th>Est.</th><th>Description</th><th>Key location</th><th style="text-align:right">Actions</th></tr></thead>
+      <tbody>${items.map(i => `
+        <tr data-open="${esc(i.id)}">
+          <td><div class="name-cell">${thumb(i)}<div><a class="card-link" href="${detailsUrl(i)}">${esc(i.name)}</a><small>${val(i.group)}</small></div></div></td>
+          <td>${i.ciType ? ciBadge(i.ciType) : NA}</td>
+          <td>${val(i.vertical)}</td>
+          <td>${val(i.companyType)}</td>
+          <td>${val(i.city)}</td>
+          <td>${i.esg ? esgBadge(i.esg) : NA}</td>
+          <td>${i.multi == null ? NA : yn(i.multi)}</td>
+          <td>${i.contacts}</td>
+          <td class="dt">${val(i.year)}</td>
+          <td class="d"><p class="desc">${esc(i.description)}</p></td>
+          <td class="loc-cell"><p class="addr">${val(i.address)}</p><div class="loc-head"><span class="coords">${coords(i)}</span>${mapLink(i)}</div></td>
+          <td class="act">${listActions(i)}${actionBtn(i)}</td>
+        </tr>`).join("")}</tbody>
+    </table>
+  </div>`;
+    const ListView = items => ItemTable(items);
+
+    const Empty = () => `
+  <div class="empty">${icon("inbox")}<h3>No consumers match your search</h3>
+  <p>Try a different keyword or clear the filters.</p>
+  <button class="btn" data-clear>Clear search and filters</button></div>`;
+
+    const Skeleton = () => `<div class="grid">${Array(8).fill('<div class="skel"></div>').join("")}</div>`;
+
+    const ErrorState = () => `
+  <div class="empty">${icon("inbox")}<h3>Couldn't load ${esc(DATA_URL)}</h3>
+  <p>${esc(state.error)}</p>
+  <p>Keep the file next to this HTML and open the page through a local server (for example <code>python -m http.server</code>). Browsers block fetch() on file:// pages.</p>
+  <button class="btn" data-retry>Try again</button></div>`;
+
+    const Placeholder = () => `
+  <div class="empty">${icon("filter")}<h3>${esc(sectionLabel(state.section))}</h3>
+  <p>Data for this section isn't connected yet. Its filters are ready in Advanced Filter.</p></div>`;
+
+    const Content = () => {
+      if (state.section !== "entities") return Placeholder();
+      if (state.loading) return Skeleton();
+      if (state.error) return ErrorState();
+      const items = getVisible();
+      const shown = items.slice(0, state.limit);
+      const n = `<p class="count" aria-live="polite">Showing ${shown.length} of ${items.length} consumers${items.length !== state.items.length ? ` (filtered from ${state.items.length})` : ""}</p>`;
+      if (!items.length) return n + Empty();
+      const more = items.length > shown.length ? `<div class="more"><button class="btn" data-more>Show ${Math.min(PAGE, items.length - shown.length)} more</button></div>` : "";
+      return n + (state.viewMode === "grid" ? GridView(shown) : ListView(shown)) + more;
+    };
+
+    /* ---------- Render ---------- */
+    const app = document.getElementById("app");
+    function renderContent() { const el = document.getElementById("content"); if (el) el.innerHTML = Content(); }
+    function renderToggle() { document.getElementById("vt").innerHTML = ViewToggle(); }
+    function mount() {
+      if (typeof MyLists !== "undefined" && MyLists.handles(state.section)) { app.innerHTML = MyLists.html(state.section); return; }   /* My Lists + saved list pages */
+      if (state.section === "ask" && typeof AskCI !== "undefined") { app.innerHTML = AskCI.html(); AskCI.bind(app); return; }   /* Ask C&I: no banner, no page header */
+      app.innerHTML = (bannerHidden(state.section) ? "" : Banner()) + DashboardHeader() + `<main id="content">${Content()}</main>`;
+    }
+
+
+    /* ---------- Sidebar section + Advanced Filter wiring ---------- */
+    function advancedMatch(i) {
+      /* Advanced Filter values: AdvancedFilter.get().values  (keys = field ids in filter-config.js).
+         The new filters have no matching data fields yet, so nothing is applied here. */
+      return true;
+    }
+    function openSection(id, push = true) {
+      if (id === state.section) return;
+      state.section = id; state.limit = PAGE;
+      if (push) { try { history.pushState(null, "", "?section=" + id); } catch (e) { } }
+      setActiveNav(id); AdvancedFilter.setSection(id); mount();
+    }
+    window.addEventListener("popstate", () => openSection(currentSection(), false));
+
+    /* ---------- Events ---------- */
+    app.addEventListener("click", e => {
+      if (e.target.closest("[data-more]")) { state.limit += PAGE; renderContent(); return; }
+      if (e.target.closest("[data-retry]")) { boot(); return; }
+      const v = e.target.closest("[data-view]");
+      if (v) { state.viewMode = v.dataset.view; renderToggle(); renderContent(); return; }
+      const a = e.target.closest("[data-action]");
+      if (a) { const it = state.items.find(i => String(i.id) === a.dataset.action); toast("Actions for " + it.name); return; }
+      const t = e.target.closest("[data-toast]");
+      if (t) { toast(t.dataset.toast); return; }
+      if (e.target.closest("[data-clear]")) { state.query = ""; state.type = "All"; state.sort = "name-asc"; state.limit = PAGE; mount(); return; }
+      const o = e.target.closest("[data-open]");
+      if (o && !e.target.closest("a,button,input,select,label")) location.href = detailsUrl({ id: o.dataset.open });
+    });
+    app.addEventListener("input", e => {
+      if (e.target.id === "q") { state.query = e.target.value; state.limit = PAGE; renderContent(); }
+    });
+    app.addEventListener("change", e => {
+      if (e.target.id === "type") { state.type = e.target.value; state.limit = PAGE; renderContent(); }
+      if (e.target.id === "sort") { state.sort = e.target.value; state.limit = PAGE; renderContent(); }
+    });
+
+    /* ---------- Boot (loads ec_projects.json) ---------- */
+    function boot() {
+      state.loading = true; state.error = null; mount();
+      loadRecords()
+        .then(list => { state.items = list.map(normalize); })
+        .catch(err => { state.error = err.message || String(err); })
+        .finally(() => { state.loading = false; mount(); if (state.y) { window.scrollTo(0, state.y); state.y = 0; } });
+    }
+    restoreState();
+    boot();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ask C&I | Dashboard</title>
+    <link rel="stylesheet" href="ask-ci.css">
+</head>
+
+<body>
+
+    <main class="ask-ci-page">
+        <section class="ask-ci-content">
+
+            <!-- Logo -->
+            <div class="ask-ci-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                    stroke-linejoin="round" aria-hidden="true">
+                    <path d="M13 2 4.5 13h7L11 22l8.5-12h-7L13 2Z" />
+                </svg>
+            </div>
+
+            <!-- Heading -->
+            <span class="ask-ci-eyebrow">Ask C&I</span>
+
+            <h1 class="ask-ci-title">
+                Your Energy Questions, Answered.
+            </h1>
+
+            <p class="ask-ci-subtitle">
+                Your intelligent assistant for Commercial & Industrial consumers.
+                Explore electricity tariffs, renewable energy, open access,
+                regulations and power procurement.
+            </p>
+
+            <!-- Textarea and arrow button in ONE container -->
+            <form class="ask-ci-prompt-box" id="askCIForm">
+                <textarea id="askCIInput" class="ask-ci-textarea" rows="2" maxlength="5000"
+                    placeholder="Ask anything about your energy requirements..."
+                    aria-label="Enter your energy question"></textarea>
+
+                <button class="ask-ci-send" id="askCISend" type="submit" aria-label="Submit question" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 19V5" />
+                        <path d="m5 12 7-7 7 7" />
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Disclaimer -->
+            <p class="ask-ci-disclaimer">
+                AI-generated responses may contain inaccuracies.
+                Please verify critical regulatory and tariff information
+                with official sources.
+            </p>
+
+            <!-- Suggestion cards -->
+            <section class="ask-ci-suggestions">
+                <h2 class="ask-ci-section-title">Explore what you can ask</h2>
+
+                <div class="ask-ci-grid">
+
+                    <button class="ask-ci-card" type="button"
+                        data-prompt="Explain industrial electricity tariffs and demand charges for C&I consumers in India.">
+                        <span class="ask-ci-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M13 2 4.5 13h7L11 22l8.5-12h-7L13 2Z" />
+                            </svg>
+                        </span>
+                        <span class="ask-ci-card-content">
+                            <strong>Electricity Tariffs</strong>
+                            <small>Understand industrial tariffs and demand charges.</small>
+                        </span>
+                    </button>
+
+                    <button class="ask-ci-card" type="button"
+                        data-prompt="Explain renewable energy procurement options for C&I consumers in India.">
+                        <span class="ask-ci-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 4c-9 0-15 4-15 11a5 5 0 0 0 5 5c7 0 11-7 10-16Z" />
+                                <path d="M4 21c3-5 7-8 12-11" />
+                            </svg>
+                        </span>
+                        <span class="ask-ci-card-content">
+                            <strong>Green Energy</strong>
+                            <small>Explore renewable energy procurement options.</small>
+                        </span>
+                    </button>
+
+                    <button class="ask-ci-card" type="button"
+                        data-prompt="Explain open access eligibility, charges and procedures for C&I consumers in India.">
+                        <span class="ask-ci-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="2" width="6" height="6" rx="1" />
+                                <rect x="2" y="16" width="6" height="6" rx="1" />
+                                <rect x="16" y="16" width="6" height="6" rx="1" />
+                                <path d="M12 8v4M5 16v-4h14v4" />
+                            </svg>
+                        </span>
+                        <span class="ask-ci-card-content">
+                            <strong>Open Access</strong>
+                            <small>Explore eligibility, charges and procedures.</small>
+                        </span>
+                    </button>
+
+                    <button class="ask-ci-card" type="button"
+                        data-prompt="Explain CERC and SERC regulations affecting commercial and industrial electricity consumers in India.">
+                        <span class="ask-ci-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3 3 8h18l-9-5Z" />
+                                <path d="M5 9v8M9 9v8M15 9v8M19 9v8M3 19h18M2 22h20" />
+                            </svg>
+                        </span>
+                        <span class="ask-ci-card-content">
+                            <strong>Energy Regulations</strong>
+                            <small>Explore CERC, SERC and policy updates.</small>
+                        </span>
+                    </button>
+
+                    <button class="ask-ci-card" type="button"
+                        data-prompt="Compare DISCOM supply, power purchase agreements and renewable energy procurement for C&I consumers in India.">
+                        <span class="ask-ci-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 7V3M15 7V3M7 7h10v4a5 5 0 0 1-5 5v5" />
+                                <path d="M5 7v4a7 7 0 0 0 14 0V7" />
+                            </svg>
+                        </span>
+                        <span class="ask-ci-card-content">
+                            <strong>Power Procurement</strong>
+                            <small>Understand PPAs and power supply alternatives.</small>
+                        </span>
+                    </button>
+
+                    <button class="ask-ci-card" type="button"
+                        data-prompt="Suggest practical strategies to reduce electricity costs for industrial consumers in India.">
+                        <span class="ask-ci-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m22 17-8-8-5 5-6-6" />
+                                <path d="M16 17h6v-6" />
+                            </svg>
+                        </span>
+                        <span class="ask-ci-card-content">
+                            <strong>Energy Cost Savings</strong>
+                            <small>Discover ways to reduce electricity expenses.</small>
+                        </span>
+                    </button>
+
+                </div>
+            </section>
+
+            <p class="ask-ci-status" id="askCIStatus" role="status" aria-live="polite"></p>
+
+        </section>
+    </main>
+
+    <script src="ask-ci.js"></script>
+</body>
+
+</html>

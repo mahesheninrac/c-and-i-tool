@@ -1,0 +1,407 @@
+/* auth.css: login and register pages.
+   Load AFTER Project-Library-Dashboard.css: it supplies the root tokens (--bg, --surface, --ink, --muted, --line,
+   --hover, --primary, --primary-ink, --accent, --shadow), the Manrope font, and the shared .field / .input / .btn styles.
+   Everything here is scoped under .auth. The only new colour is --danger (the root theme has no error colour). */
+
+.auth {
+  --danger: #b42318;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 5fr 6fr
+}
+
+/* ---- Brand panel (left) ---- */
+.auth-brand {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: clamp(28px, 4vw, 56px);
+  overflow: hidden;
+  color: var(--primary-ink);
+  background: radial-gradient(640px 400px at 90% 6%, color-mix(in srgb, var(--accent) 45%, transparent), transparent 60%),
+    linear-gradient(130deg, color-mix(in srgb, var(--primary) 78%, #000) 0%, var(--primary) 55%, color-mix(in srgb, var(--accent) 40%, var(--primary)) 100%)
+}
+
+.auth-brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: .3;
+  background-size: 44px 44px;
+  background-image: linear-gradient(color-mix(in srgb, var(--primary-ink) 14%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--primary-ink) 14%, transparent) 1px, transparent 1px);
+  -webkit-mask-image: radial-gradient(ellipse at 30% 40%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse at 30% 40%, #000 20%, transparent 75%)
+}
+
+.auth-brand>* {
+  position: relative
+}
+
+.auth-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  color: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  text-decoration: none
+}
+
+.auth-brand .brand-mark {
+  background: color-mix(in srgb, var(--primary-ink) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-ink) 24%, transparent)
+}
+
+.auth-brand__title {
+  margin: 0 0 22px;
+  max-width: 16ch;
+  font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.02em
+}
+
+.auth-points {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none
+}
+
+.auth-points li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: .95rem;
+  color: color-mix(in srgb, var(--primary-ink) 86%, transparent)
+}
+
+.auth-points .icon {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  color: var(--accent)
+}
+
+.auth-brand__foot {
+  margin: 0;
+  font-size: .8rem;
+  opacity: .7
+}
+
+/* ---- Form panel (right) ---- */
+.auth-panel {
+  display: grid;
+  place-items: center;
+  padding: clamp(20px, 4vw, 48px)
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: clamp(22px, 4vw, 36px);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: var(--shadow)
+}
+
+.auth-card__head h1 {
+  margin: 0 0 4px;
+  font-size: 1.5rem;
+  letter-spacing: -.015em
+}
+
+.auth-card__head p {
+  margin: 0 0 22px;
+  color: var(--muted)
+}
+
+.auth-card a {
+  color: var(--primary);
+  font-weight: 700;
+  text-decoration: none
+}
+
+.auth-card a:hover {
+  text-decoration: underline
+}
+
+.auth-card a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px
+}
+
+.auth-field {
+  margin-bottom: 16px
+}
+
+.auth-field>label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: .85rem;
+  font-weight: 700
+}
+
+.auth-field .opt {
+  font-weight: 500;
+  color: var(--muted)
+}
+
+.auth .field {
+  display: flex
+}
+
+.auth .input {
+  width: 100%;
+  height: 44px
+}
+
+.auth .field--pw .input {
+  padding-right: 46px
+}
+
+.auth .input[aria-invalid="true"] {
+  border-color: var(--danger)
+}
+
+.auth .input[aria-invalid="true"]:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--danger) 22%, transparent)
+}
+
+.pw-toggle {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .15s, color .15s
+}
+
+.pw-toggle:hover {
+  background: var(--hover);
+  color: var(--ink)
+}
+
+.pw-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px
+}
+
+.auth-error {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 6px 0 0;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--danger)
+}
+
+.auth-error .icon {
+  width: 14px;
+  height: 14px
+}
+
+.auth-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin: 2px 0 20px
+}
+
+.auth-check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: .88rem;
+  cursor: pointer
+}
+
+.auth-check input {
+  appearance: none;
+  -webkit-appearance: none;
+  display: grid;
+  place-content: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 1px 0 0;
+  border: 1.5px solid var(--muted);
+  border-radius: 5px;
+  background: var(--surface);
+  cursor: pointer;
+  transition: background .15s, border-color .15s
+}
+
+.auth-check input::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border-left: 2px solid var(--primary-ink);
+  border-bottom: 2px solid var(--primary-ink);
+  transform: rotate(-45deg) translate(1px, -1px) scale(0);
+  transition: transform .12s
+}
+
+.auth-check input:checked {
+  background: var(--primary);
+  border-color: var(--primary)
+}
+
+.auth-check input:checked::after {
+  transform: rotate(-45deg) translate(1px, -1px) scale(1)
+}
+
+.auth-check input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px
+}
+
+.auth-check input[aria-invalid="true"] {
+  border-color: var(--danger)
+}
+
+.auth-terms {
+  margin-bottom: 20px
+}
+
+.auth-terms .auth-error {
+  margin-left: 28px
+}
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
+  height: 46px;
+  font-size: .95rem
+}
+
+.auth-submit:disabled {
+  opacity: .8;
+  cursor: progress
+}
+
+.auth-submit[aria-busy="true"]::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border: 2px solid color-mix(in srgb, var(--primary-ink) 40%, transparent);
+  border-top-color: var(--primary-ink);
+  border-radius: 50%;
+  animation: auth-spin .7s linear infinite
+}
+
+@keyframes auth-spin {
+  to {
+    transform: rotate(360deg)
+  }
+}
+
+.auth-switch {
+  margin: 20px 0 0;
+  text-align: center;
+  font-size: .9rem;
+  color: var(--muted)
+}
+
+.auth-alert,
+.auth-notice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: .88rem;
+  font-weight: 600
+}
+
+.auth-alert .icon,
+.auth-notice .icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px
+}
+
+.auth-alert {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--danger) 30%, var(--line))
+}
+
+.auth-notice {
+  color: var(--primary);
+  background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line))
+}
+
+.strength {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-size: .78rem;
+  color: var(--muted)
+}
+
+.strength__bars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  flex: none;
+  width: 100px
+}
+
+.strength__bars i {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--line);
+  transition: background .2s
+}
+
+.strength__bars i.on {
+  background: var(--accent)
+}
+
+.strength[data-level="4"] .strength__bars i.on {
+  background: var(--primary)
+}
+
+/* ---- Small screens: brand panel becomes a slim header band ---- */
+@media (max-width:860px) {
+  .auth {
+    grid-template-columns: 1fr
+  }
+
+  .auth-brand {
+    padding: 18px clamp(16px, 4vw, 32px)
+  }
+
+  .auth-brand__body,
+  .auth-brand__foot {
+    display: none
+  }
+
+  .auth-panel {
+    align-items: start;
+    padding: 20px 16px 32px
+  }
+}

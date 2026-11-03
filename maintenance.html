@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>We're On It | Eninrac – Temporary Downtime</title>
+    <meta name="robots" content="noindex">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --blue-900: #082C4E;
+            --blue-800: #0A3D62;
+            --blue-700: #11507E;
+            --blue-600: #1B6CA8;
+            --amber: #F39C12;
+            --amber-deep: #E67E22;
+            --ink: #22313F;
+            --muted: #5D6D7E;
+            --line: #E3EAF2;
+            --bg: #F6F9FC;
+            --green: #27AE60;
+            --red: #E74C3C;
+            --radius: 16px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(1200px 600px at 85% -10%, rgba(243, 156, 18, .08), transparent 60%),
+                radial-gradient(1000px 700px at -10% 110%, rgba(10, 61, 98, .08), transparent 60%),
+                var(--bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Poppins', 'Inter', sans-serif
+        }
+
+        /* ===== Header ===== */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, .85);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .nav {
+            max-width: 1160px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 24px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none
+        }
+
+        .logo-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--blue-800), var(--blue-600));
+            display: grid;
+            place-items: center;
+            box-shadow: 0 6px 16px rgba(10, 61, 98, .25);
+        }
+
+        .logo-mark svg {
+            width: 22px;
+            height: 22px;
+            fill: #fff
+        }
+
+        .logo-text {
+            line-height: 1.05
+        }
+
+        .logo-text b {
+            font-family: 'Poppins', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--blue-800);
+            letter-spacing: .2px;
+        }
+
+        .logo-text span {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--amber-deep);
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #8a5a00;
+            background: #FFF4DC;
+            border: 1px solid #F6DFA8;
+            padding: 8px 14px;
+            border-radius: 999px;
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--amber);
+            position: relative
+        }
+
+        .dot::after {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(243, 156, 18, .45);
+            animation: ping 1.6s ease-out infinite;
+        }
+
+        @keyframes ping {
+            0% {
+                transform: scale(.6);
+                opacity: 1
+            }
+
+            100% {
+                transform: scale(1.5);
+                opacity: 0
+            }
+        }
+
+        /* ===== Main ===== */
+        main {
+            flex: 1;
+            max-width: 1160px;
+            margin: auto;
+            width: 100%;
+            padding: 48px 24px 24px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.05fr .95fr;
+            gap: 56px;
+            align-items: center
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--blue-600);
+            background: #E8F1FA;
+            border: 1px solid #CFE2F3;
+            padding: 7px 14px;
+            border-radius: 999px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: clamp(34px, 5vw, 52px);
+            line-height: 1.12;
+            color: var(--blue-900);
+            font-weight: 700;
+            letter-spacing: -.5px;
+        }
+
+        h1 .accent {
+            color: var(--amber-deep)
+        }
+
+        .lede {
+            margin-top: 18px;
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--muted);
+            max-width: 520px;
+        }
+
+        .lede b {
+            color: var(--ink)
+        }
+
+        /* progress */
+        .progress-wrap {
+            margin-top: 30px;
+            max-width: 520px
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--muted);
+            margin-bottom: 10px
+        }
+
+        .progress {
+            height: 10px;
+            border-radius: 999px;
+            background: #E6EDF5;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(10, 61, 98, .08)
+        }
+
+        .bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--blue-600), var(--amber));
+            animation: fill 9s ease-in-out forwards;
+            position: relative;
+        }
+
+        .bar::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .5), transparent);
+            animation: shine 1.8s linear infinite;
+        }
+
+        @keyframes fill {
+            0% {
+                width: 4%
+            }
+
+            60% {
+                width: 68%
+            }
+
+            100% {
+                width: 87%
+            }
+        }
+
+        @keyframes shine {
+            from {
+                transform: translateX(-100%)
+            }
+
+            to {
+                transform: translateX(100%)
+            }
+        }
+
+        /* countdown cards */
+        .clock-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 34px;
+            flex-wrap: wrap
+        }
+
+        .clock-card {
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            min-width: 86px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(10, 61, 98, .06);
+        }
+
+        .clock-card b {
+            display: block;
+            font-family: 'Poppins', sans-serif;
+            font-size: 26px;
+            color: var(--blue-800);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .clock-card span {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--muted)
+        }
+
+        /* buttons */
+        .cta-row {
+            display: flex;
+            gap: 14px;
+            margin-top: 34px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            text-decoration: none;
+            padding: 14px 26px;
+            border-radius: 12px;
+            transition: .2s ease;
+            border: 0;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--blue-800), var(--blue-600));
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(10, 61, 98, .28);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(10, 61, 98, .35)
+        }
+
+        .btn-ghost {
+            background: #fff;
+            color: var(--blue-800);
+            border: 1.5px solid var(--line)
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--blue-600);
+            background: #F3F8FD
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor
+        }
+
+        /* notify */
+        .notify {
+            margin-top: 30px;
+            max-width: 520px
+        }
+
+        .notify label {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--ink)
+        }
+
+        .notify-field {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            background: #fff;
+            border: 1.5px solid var(--line);
+            border-radius: 14px;
+            padding: 6px 6px 6px 18px;
+            transition: .2s;
+        }
+
+        .notify-field:focus-within {
+            border-color: var(--blue-600);
+            box-shadow: 0 0 0 4px rgba(27, 108, 168, .12)
+        }
+
+        .notify-field input {
+            flex: 1;
+            border: 0;
+            outline: 0;
+            font: inherit;
+            font-size: 15px;
+            color: var(--ink);
+            background: transparent;
+            min-width: 0;
+        }
+
+        .notify-field button {
+            border: 0;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font: inherit;
+            font-weight: 600;
+            font-size: 14px;
+            background: var(--amber);
+            color: #fff;
+            cursor: pointer;
+            transition: .2s;
+            white-space: nowrap;
+        }
+
+        .notify-field button:hover {
+            background: var(--amber-deep)
+        }
+
+        .notify-msg {
+            margin-top: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--green);
+            display: none
+        }
+
+        /* ===== Server illustration ===== */
+        .scene {
+            position: relative;
+            display: grid;
+            place-items: center;
+            padding: 10px
+        }
+
+        .glow {
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(243, 156, 18, .16), transparent 65%);
+            animation: breathe 5s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: .8
+            }
+
+            50% {
+                transform: scale(1.12);
+                opacity: 1
+            }
+        }
+
+        .rack {
+            position: relative;
+            width: min(360px, 80vw);
+            background: linear-gradient(160deg, var(--blue-900), var(--blue-800));
+            border-radius: 22px;
+            padding: 22px;
+            box-shadow: 0 30px 60px rgba(8, 44, 78, .35), inset 0 1px 0 rgba(255, 255, 255, .12);
+        }
+
+        .rack::before {
+            content: "ENINRAC · CORE STACK";
+            display: block;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, .55);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .unit {
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .unit:last-child {
+            margin-bottom: 0
+        }
+
+        .unit.down {
+            background: rgba(231, 76, 60, .14);
+            border-color: rgba(231, 76, 60, .45);
+            animation: alertPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes alertPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0)
+            }
+
+            50% {
+                box-shadow: 0 0 0 6px rgba(231, 76, 60, .12)
+            }
+        }
+
+        .unit .label {
+            flex: 1;
+            color: rgba(255, 255, 255, .9);
+            font-size: 13px;
+            font-weight: 600
+        }
+
+        .unit .label small {
+            display: block;
+            font-size: 10.5px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, .5);
+            letter-spacing: 1px;
+            margin-top: 2px
+        }
+
+        .leds {
+            display: flex;
+            gap: 6px
+        }
+
+        .led {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%
+        }
+
+        .led.g {
+            background: var(--green);
+            animation: blink 1.4s infinite
+        }
+
+        .led.a {
+            background: var(--amber);
+            animation: blink 1.4s .3s infinite
+        }
+
+        .led.r {
+            background: var(--red);
+            animation: blink .7s infinite
+        }
+
+        .led.off {
+            background: rgba(255, 255, 255, .15);
+            animation: none
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: .25
+            }
+        }
+
+        .warn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            background: rgba(231, 76, 60, .2);
+        }
+
+        .warn svg {
+            width: 18px;
+            height: 18px;
+            fill: var(--red)
+        }
+
+        .wrench {
+            position: absolute;
+            right: -26px;
+            bottom: -26px;
+            width: 92px;
+            height: 92px;
+            border-radius: 24px;
+            background: #fff;
+            border: 1px solid var(--line);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 16px 36px rgba(10, 61, 98, .18);
+            animation: toolFloat 4s ease-in-out infinite;
+        }
+
+        .wrench svg {
+            width: 44px;
+            height: 44px;
+            fill: var(--amber-deep)
+        }
+
+        @keyframes toolFloat {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-4deg)
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(4deg)
+            }
+        }
+
+        .bolt-chip {
+            position: absolute;
+            left: -24px;
+            top: -20px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--blue-800);
+            box-shadow: 0 12px 28px rgba(10, 61, 98, .14);
+            animation: toolFloat 4s .8s ease-in-out infinite;
+        }
+
+        .bolt-chip svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--amber)
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            border-top: 1px solid var(--line);
+            background: #fff;
+            margin-top: 56px
+        }
+
+        .foot {
+            max-width: 1160px;
+            margin: auto;
+            padding: 28px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .foot .brand {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            color: var(--blue-800);
+            font-size: 15px
+        }
+
+        .foot .brand span {
+            color: var(--amber-deep)
+        }
+
+        .foot .contact {
+            display: flex;
+            gap: 22px;
+            flex-wrap: wrap;
+            font-size: 13.5px;
+            color: var(--muted);
+            font-weight: 500
+        }
+
+        .foot a {
+            color: var(--blue-700);
+            text-decoration: none;
+            font-weight: 600
+        }
+
+        .foot a:hover {
+            color: var(--amber-deep)
+        }
+
+        .foot .tag {
+            font-size: 12px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 600
+        }
+
+        .foot .tag b {
+            color: var(--blue-600)
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width:940px) {
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 60px
+            }
+
+            .scene {
+                order: -1
+            }
+
+            .rack {
+                width: min(320px, 86vw)
+            }
+        }
+
+        @media (max-width:520px) {
+            .nav {
+                padding: 12px 16px
+            }
+
+            .status-pill span.txt {
+                display: none
+            }
+
+            main {
+                padding: 34px 18px
+            }
+
+            .cta-row .btn {
+                width: 100%;
+                justify-content: center
+            }
+
+            .clock-card {
+                flex: 1
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ======= HEADER ======= -->
+    <header>
+        <nav class="nav">
+            <a class="logo" href="https://eninrac.com" aria-label="Eninrac home">
+                <span class="logo-mark">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2z" />
+                    </svg>
+                </span>
+                <span class="logo-text"><b>eninrac</b><span>Explore · Enrich · Elevate</span></span>
+            </a>
+            <div class="status-pill"><span class="dot"></span><span class="txt">Scheduled maintenance in progress</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ======= MAIN ======= -->
+    <main>
+        <section class="grid">
+
+            <!-- Left: message -->
+            <div>
+                <span class="eyebrow">⚡ Server Down — We're On It</span>
+                <h1>Our servers are taking a <span class="accent">pit&nbsp;stop</span>.<br>We're already on it.</h1>
+                <p class="lede">
+                    The <b>Eninrac Store</b> &amp; knowledge platforms are temporarily offline while our
+                    engineering team powers up a faster, more reliable experience for you.
+                    No action is needed — sit tight, we're recharging the grid.
+                </p>
+
+                <div class="progress-wrap">
+                    <div class="progress-meta">
+                        <span>Restoration progress</span>
+                        <span id="pct">87%</span>
+                    </div>
+                    <div class="progress">
+                        <div class="bar"></div>
+                    </div>
+                </div>
+
+                <div class="clock-row" aria-label="Time remaining">
+                    <div class="clock-card"><b id="hh">02</b><span>Hours</span></div>
+                    <div class="clock-card"><b id="mm">45</b><span>Minutes</span></div>
+                    <div class="clock-card"><b id="ss">00</b><span>Seconds</span></div>
+                    <div class="clock-card"><b id="ist">--:--</b><span>IST Now</span></div>
+                </div>
+
+                <div class="cta-row">
+                    <a class="btn btn-primary" href="mailto:store@eninrac.com">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" />
+                        </svg>
+                        Email Support
+                    </a>
+                    <a class="btn btn-ghost" href="tel:+917838998844">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z" />
+                        </svg>
+                        Call +91 78389 98844
+                    </a>
+                </div>
+
+                <form class="notify" id="notifyForm">
+                    <label for="email">Want a ping when we're back online?</label>
+                    <div class="notify-field">
+                        <input id="email" type="email" required placeholder="you@company.com" />
+                        <button type="submit">Notify Me</button>
+                    </div>
+                    <p class="notify-msg" id="notifyMsg">✓ You're on the list — we'll email you the moment we're live.
+                    </p>
+                </form>
+            </div>
+
+            <!-- Right: server illustration -->
+            <div class="scene" aria-hidden="true">
+                <div class="glow"></div>
+                <div class="bolt-chip">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2z" />
+                    </svg>
+                    Recharging… 87%
+                </div>
+
+                <div class="rack">
+                    <div class="unit">
+                        <div class="label">API Gateway <small>NODE · MUMBAI-01</small></div>
+                        <div class="leds"><span class="led g"></span><span class="led g"></span><span
+                                class="led a"></span></div>
+                    </div>
+                    <div class="unit down">
+                        <span class="warn"><svg viewBox="0 0 24 24">
+                                <path d="M12 2 1 21h22L12 2zm1 15h-2v-2h2v2zm0-4h-2V9h2v4z" />
+                            </svg></span>
+                        <div class="label">Store Frontend <small>STATUS · DOWN</small></div>
+                        <div class="leds"><span class="led r"></span><span class="led off"></span><span
+                                class="led off"></span></div>
+                    </div>
+                    <div class="unit">
+                        <div class="label">Knowledge DB <small>SYNC · QUEUED</small></div>
+                        <div class="leds"><span class="led a"></span><span class="led g"></span><span
+                                class="led off"></span></div>
+                    </div>
+                    <div class="unit">
+                        <div class="label">Insights Engine <small>REBUILDING INDEX</small></div>
+                        <div class="leds"><span class="led g"></span><span class="led a"></span><span
+                                class="led g"></span></div>
+                    </div>
+
+                    <div class="wrench">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M22.7 19 13.6 9.9c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- ======= FOOTER ======= -->
+    <footer>
+        <div class="foot">
+            <div class="brand">eninrac<span>.</span></div>
+            <div class="tag">Explore · <b>Enrich</b> · Elevate</div>
+            <div class="contact">
+                <a href="mailto:info@eninrac.com">info@eninrac.com</a>
+                <a href="tel:+917838998844">+91 78389 98844</a>
+                <a href="https://www.linkedin.com/company/eninrac" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+            <div style="font-size:12.5px;color:var(--muted)">© <span id="yr"></span> Eninrac Consulting Pvt. Ltd. — All
+                rights reserved.</div>
+        </div>
+    </footer>
+
+    <script>
+        /* Year */
+        document.getElementById('yr').textContent = new Date().getFullYear();
+
+        /* Live IST clock */
+        function tickClock() {
+            const now = new Date();
+            const ist = new Date(now.getTime() + (330 + now.getTimezoneOffset()) * 60000);
+            document.getElementById('ist').textContent =
+                String(ist.getHours()).padStart(2, '0') + ':' + String(ist.getMinutes()).padStart(2, '0');
+        }
+        tickClock(); setInterval(tickClock, 1000);
+
+        /* Countdown — set your expected restore time here (minutes from load) */
+        let remaining = 2 * 3600 + 45 * 60; // 2h 45m
+        function tickCountdown() {
+            if (remaining <= 0) return;
+            remaining--;
+            const h = Math.floor(remaining / 3600), m = Math.floor((remaining % 3600) / 60), s = remaining % 60;
+            document.getElementById('hh').textContent = String(h).padStart(2, '0');
+            document.getElementById('mm').textContent = String(m).padStart(2, '0');
+            document.getElementById('ss').textContent = String(s).padStart(2, '0');
+        }
+        tickCountdown(); setInterval(tickCountdown, 1000);
+
+        /* Notify form (front-end demo) */
+        document.getElementById('notifyForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            document.getElementById('notifyMsg').style.display = 'block';
+            this.querySelector('input').value = '';
+        });
+    </script>
+
+</body>
+
+</html>

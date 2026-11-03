@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>C&I Consumer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./Project-Library-Dashboard.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+</head>
+
+<body>
+  <script src="./common.js"></script>
+  <script src="./search-modal.js"></script>
+  <script>
+
+
+
+    const app = initShell();
+    let current = null;
+    const params = new URLSearchParams(location.search);
+
+    let map = null, siteLayer = null, kmlLayer = null;
+    const kmlStore = {};
+    const TABS = [["overview", "Overview", "building"], ["analytics", "Analytics", "chart"], ["map", "Map &amp; KML", "pin"]];
+    const fact = (k, v) => `<div class="fact"><dt>${k}</dt><dd>${v}</dd></div>`;
+    const contactCard = (c, r) => c && (c.name || c.phone || c.email) ? fact(esc(c.role || r), `<strong>${val(c.name)}</strong>` + [c.phone && `<a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`, c.alt && `<a href="tel:${esc(c.alt)}">${esc(c.alt)}</a>`, c.email && `<a href="mailto:${esc(c.email)}">${esc(c.email)}</a>`].filter(Boolean).join("")) : "";
+    const gmapsUrl = i => (i.lat != null && i.lng != null) ? `https://www.google.com/maps?q=${i.lat},${i.lng}` : i.address ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(i.address)}` : "";
+
+    const Details = i => {
+      const gm = gmapsUrl(i);
+      return `
+  <nav class="crumbs" aria-label="Breadcrumb"><a class="back" href="index.html">${icon("chevleft")}All consumers</a><span aria-hidden="true">/</span><span>${esc(i.name)}</span></nav>
+  <section class="dh" aria-labelledby="dn">
+    <div class="dh-top">${thumb(i)}
+      <div><h1 id="dn">${esc(i.name)}</h1><p class="group">Parent: ${val(i.group)}</p>
+        <div class="dh-badges">${i.ciType ? ciBadge(i.ciType) : ""}${i.vertical ? `<span class="tag">${esc(i.vertical)}</span>` : ""}</div></div>
+      ${i.sourceUrl ? `<a class="btn dh-actions" href="${esc(i.sourceUrl)}" target="_blank" rel="noopener noreferrer">Source record</a>` : ""}
+    </div>
+    <p class="desc">${esc(i.description)}</p>
+    <dl class="kv kv-3">
+      <div><dt>Global ESG mandate</dt><dd>${i.esg ? esgBadge(i.esg) : NA}</dd></div>
+      <div><dt>Multi-facility potential</dt><dd>${i.multi == null ? NA : yn(i.multi)}</dd></div>
+      <div><dt>Company type</dt><dd>${val(i.companyType)}</dd></div>
+      <div><dt>Established</dt><dd>${val(i.year)}</dd></div>
+      <div><dt>Location</dt><dd>${icon("pin")}${val(i.city)}</dd></div>
+      <div><dt>Contacts</dt><dd>${icon("users")}${i.contacts}</dd></div>
+    </dl>
+    <div class="loc"><div><span class="coords">${coords(i)}</span><p class="addr">${val(i.address)}</p></div>
+      <button class="btn btn-primary" data-tab="map" data-goto>${icon("pin")}View on map</button></div>
+  </section>
+  <div class="tabs" role="tablist" aria-label="Consumer sections">
+    ${TABS.map(([k, l, ic]) => `<button class="tab" role="tab" id="tab-${k}" data-tab="${k}" aria-controls="panel-${k}" aria-selected="false" tabindex="-1">${icon(ic)}${l}</button>`).join("")}
+  </div>
+  <section class="panel" id="panel-overview" role="tabpanel" aria-labelledby="tab-overview" hidden>
+    <dl class="facts">${fact("Project activity", val(i.activity))}${fact("Connected load", i.kva ? i.kva + " kVA" : NA)}${fact("Standby DG", val(i.dg))}${fact("Manpower", val(i.manpower))}${fact("Project cost", i.cost ? "₹ " + esc(i.cost) + " crore" : NA)}${contactCard(i.applicant, "Applicant")}${contactCard(i.consultant, "EIA consultant")}</dl>
+  </section>
+  <section class="panel" id="panel-analytics" role="tabpanel" aria-labelledby="tab-analytics" hidden>
+    <div class="empty">${icon("chart")}<h3>Discom analytics</h3><p>Insights for this consumer's discom will appear here.</p></div>
+  </section>
+  <section class="panel" id="panel-map" role="tabpanel" aria-labelledby="tab-map" hidden>
+    <div class="map-card">
+      <div class="map-bar">
+        <div><div class="t">Site location</div><div class="s">${coords(i)}</div></div>
+        <div class="map-tools">
+          <button class="btn" data-map-fit>${icon("fit")}Fit</button>
+          ${gm ? `<a class="btn" href="${esc(gm)}" target="_blank" rel="noopener noreferrer">Google Maps</a>` : ""}
+          <button class="btn btn-primary" data-kml-pick>${icon("upload")}Upload KML</button>
+          <button class="btn" data-kml-clear id="kml-clear" hidden>${icon("trash")}Remove KML</button>
+          <input type="file" id="kml" accept=".kml,application/vnd.google-earth.kml+xml,text/xml,application/xml" hidden>
+        </div>
+      </div>
+      <div id="map" role="region" aria-label="Map of ${esc(i.name)}"></div>
+      <div class="map-note" id="map-note" aria-live="polite">Upload a .kml file to overlay boundaries, lines or points on the map.</div>
+    </div>
+  </section>`;
+    };
+    function parseKml(text) {
+      const doc = new DOMParser().parseFromString(text, "application/xml");
+      if (doc.getElementsByTagName("parsererror").length) return { error: "This file isn't valid KML/XML.", features: [] };
+      const q = (el, n) => Array.from(el.getElementsByTagNameNS("*", n));
+      const coords = el => {
+        const c = q(el, "coordinates")[0]; if (!c) return [];
+        return c.textContent.trim().split(/\s+/).map(t => t.split(",").map(Number)).filter(a => a.length >= 2 && Number.isFinite(a[0]) && Number.isFinite(a[1])).map(a => [a[0], a[1]])
+      };
+      const out = [], add = (kind, name, type, coordinates) => out.push({ type: "Feature", properties: { name, kind }, geometry: { type, coordinates } });
+      q(doc, "Placemark").forEach(pm => {
+        const nm = q(pm, "name")[0], name = (nm && nm.textContent.trim()) || "Untitled";
+        q(pm, "Point").forEach(g => { const c = coords(g); if (c[0]) add("Point", name, "Point", c[0]) });
+        q(pm, "LineString").forEach(g => { const c = coords(g); if (c.length > 1) add("LineString", name, "LineString", c) });
+        q(pm, "Polygon").forEach(g => {
+          const rings = [], o = q(g, "outerBoundaryIs")[0];
+          if (o) { const c = coords(o); if (c.length > 2) rings.push(c) }
+          q(g, "innerBoundaryIs").forEach(h => { const c = coords(h); if (c.length > 2) rings.push(c) });
+          if (rings.length) add("Polygon", name, "Polygon", rings)
+        });
+      });
+      return { features: out };
+    }
+    function setMapNote(msg, err) { const n = document.getElementById("map-note"); if (n) { n.textContent = msg; n.classList.toggle("err", !!err) } }
+    function destroyMap() { if (map) { map.remove(); map = null } siteLayer = kmlLayer = null }
+    function fitMap() {
+      if (!map) return;
+      const b = kmlLayer && kmlLayer.getBounds();
+      if (b && b.isValid()) { if (siteLayer) b.extend(siteLayer.getLatLng()); map.fitBounds(b, { padding: [30, 30], maxZoom: 17 }) }
+      else if (siteLayer) map.setView(siteLayer.getLatLng(), 14);
+    }
+    function showKml(data, fit) {
+      if (kmlLayer) map.removeLayer(kmlLayer);
+      kmlLayer = L.geoJSON({ type: "FeatureCollection", features: data.features }, {
+        style: () => ({ color: "#023859", weight: 3, fillColor: "#29a7d9", fillOpacity: .25 }),
+        pointToLayer: (f, ll) => L.circleMarker(ll, { radius: 7, color: "#fff", weight: 2, fillColor: "#29a7d9", fillOpacity: 1 })
+      }).addTo(map);
+      if (fit) fitMap();
+      const k = {}; data.features.forEach(f => k[f.properties.kind] = (k[f.properties.kind] || 0) + 1);
+      document.getElementById("kml-clear").hidden = false;
+      setMapNote(data.name + ": " + Object.entries(k).map(([a, b]) => b + " " + a.toLowerCase() + (b > 1 ? "s" : "")).join(", "));
+    }
+    async function handleKml(i, file) {
+      if (!map) return;
+      if (!/\.kml$/i.test(file.name)) return setMapNote("Please choose a .kml file (KMZ isn't supported).", true);
+      if (file.size > 5 * 1024 * 1024) return setMapNote("That file is larger than 5 MB.", true);
+      const res = parseKml(await file.text());
+      if (res.error || !res.features.length) return setMapNote(res.error || "No placemarks with coordinates were found in this KML.", true);
+      kmlStore[i.id] = { name: file.name, features: res.features };
+      showKml(kmlStore[i.id], true);
+    }
+
+
+    async function loadRemoteKml(i) {
+      const urls = i.kml_file?.url;
+
+      if (!Array.isArray(urls) || urls.length === 0) {
+        setMapNote("No KML file URL is available for this consumer.");
+        return;
+      }
+
+      setMapNote("Loading KML file from the consumer record...");
+
+      for (const url of urls) {
+        try {
+          const response = await fetch(url);
+
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+          }
+
+          const text = await response.text();
+          const result = parseKml(text);
+
+          if (result.error || !result.features.length) {
+            throw new Error("No valid KML features found at this URL.");
+          }
+
+          const data = {
+            name: i.kml_file.value || "Consumer KML",
+            features: result.features
+          };
+
+          kmlStore[i.id] = data;
+          showKml(data, true);
+          return;
+
+        } catch (error) {
+          console.warn("Unable to load KML URL:", url, error);
+        }
+      }
+
+      setMapNote(
+        "Automatic KML loading failed. The source may block browser access. Try opening the KML download link or uploading the file manually.",
+        true
+      );
+    }
+
+
+    function clearKml() {
+      if (!map) return;
+      if (kmlLayer) { map.removeLayer(kmlLayer); kmlLayer = null }
+      delete kmlStore[current.id];
+      document.getElementById("kml-clear").hidden = true;
+      setMapNote("Upload a .kml file to overlay boundaries, lines or points on the map."); fitMap();
+    }
+    function initMap(i) {
+      const box = document.getElementById("map");
+      if (!box) return;
+      if (!window.L) { box.innerHTML = '<div class="empty"><h3>Map library not loaded</h3><p>Check your internet connection and reload.</p></div>'; return }
+      map = L.map(box, { scrollWheelZoom: false }).setView([22.5, 79], 4);
+      map.on("click", () => map.scrollWheelZoom.enable()); map.on("mouseout", () => map.scrollWheelZoom.disable());
+      let warned = false;
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors' })
+        .on("tileerror", () => { if (!warned) { warned = true; setMapNote("Map tiles couldn't be loaded (offline or blocked). The site marker and KML shapes still show.", true) } }).addTo(map);
+      if (i.lat != null && i.lng != null) {
+        siteLayer = L.circleMarker([i.lat, i.lng], { radius: 9, color: "#fff", weight: 3, fillColor: "#023859", fillOpacity: 1 }).addTo(map);
+        map.setView([i.lat, i.lng], 14);
+      } else setMapNote("No coordinates in the data for this consumer. Upload a KML to place it on the map.");
+      if (kmlStore[i.id]) {
+        showKml(kmlStore[i.id], true);
+      } else {
+        loadRemoteKml(i);
+      }
+    }
+    function setTab(tab) {
+      document.querySelectorAll(".tab").forEach(b => { const on = b.dataset.tab === tab; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1 });
+      document.querySelectorAll(".panel").forEach(p => { p.hidden = p.id !== "panel-" + tab });
+      try { const u = new URL(location.href); u.searchParams.set("tab", tab); history.replaceState(null, "", u) } catch (e) { }
+      if (tab === "map") { if (!map) initMap(current); else setTimeout(() => map.invalidateSize(), 0) }
+    }
+
+    /* ---------- Boot ---------- */
+    const msg = (t, p) => `<div class="empty" style="margin-top:20px"><h3>${t}</h3><p>${esc(p)}</p><a class="btn btn-primary" href="index.html">Back to all consumers</a></div>`;
+    (async () => {
+      app.innerHTML = '<div class="skel" style="height:320px;margin-top:20px"></div>';
+      try {
+        const list = (await loadRecords()).map(normalize);
+        current = list.find(x => String(x.id) === params.get("id"));
+      } catch (err) { app.innerHTML = msg("Couldn't load " + DATA_URL, err.message || String(err)); return; }
+      if (!current) { app.innerHTML = msg("Consumer not found", "No record matches id " + (params.get("id") || "(none)") + "."); return; }
+      document.title = current.name + " · C&I consumers";
+      app.innerHTML = Details(current);
+      const tab = params.get("tab");
+      setTab(["overview", "analytics", "map"].includes(tab) ? tab : "overview");
+    })();
+
+    /* ---------- Events ---------- */
+    app.addEventListener("click", e => {
+      const t = e.target.closest("[data-tab]");
+      if (t) { setTab(t.dataset.tab); if (t.dataset.goto) document.querySelector(".tabs").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+      if (e.target.closest("[data-kml-pick]")) document.getElementById("kml").click();
+      else if (e.target.closest("[data-kml-clear]")) clearKml();
+      else if (e.target.closest("[data-map-fit]")) fitMap();
+    });
+    app.addEventListener("change", e => {
+      if (e.target.id === "kml") { const f = e.target.files[0]; e.target.value = ""; if (f && current) handleKml(current, f); }
+    });
+  </script>
+</body>
+
+</html>
