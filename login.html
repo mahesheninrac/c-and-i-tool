@@ -1,13 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Sign in · Eninrac</title>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./Project-Library-Dashboard.css">
-  <link rel="stylesheet" href="./auth.css">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./Project-Library-Dashboard.css" />
+  <link rel="stylesheet" href="./auth.css" />
 </head>
 
 <body>
@@ -18,17 +19,25 @@
             <use href="#i-grid" />
           </svg></span>Eninrac</a>
       <div class="auth-brand__body">
-        <p class="auth-brand__title">C&amp;I energy consumers, mapped and understood.</p>
+        <p class="auth-brand__title">
+          C&amp;I energy consumers, mapped and understood.
+        </p>
         <ul class="auth-points">
-          <li><svg class="icon" aria-hidden="true">
+          <li>
+            <svg class="icon" aria-hidden="true">
               <use href="#i-check" />
-            </svg>Explore consumers by geography, discom and cluster</li>
-          <li><svg class="icon" aria-hidden="true">
+            </svg>Explore consumers by geography, discom and cluster
+          </li>
+          <li>
+            <svg class="icon" aria-hidden="true">
               <use href="#i-check" />
-            </svg>Compare ESG mandates and multi-facility potential</li>
-          <li><svg class="icon" aria-hidden="true">
+            </svg>Compare ESG mandates and multi-facility potential
+          </li>
+          <li>
+            <svg class="icon" aria-hidden="true">
               <use href="#i-check" />
-            </svg>Overlay site boundaries with KML on the map</li>
+            </svg>Overlay site boundaries with KML on the map
+          </li>
         </ul>
       </div>
       <p class="auth-brand__foot">© 2026 Eninrac</p>
@@ -39,44 +48,62 @@
           <h1>Welcome back</h1>
           <p>Sign in to continue to your dashboard.</p>
         </header>
-        <div class="auth-notice" id="notice" role="status" hidden><svg class="icon" aria-hidden="true">
+        <div class="auth-notice" id="notice" role="status" hidden>
+          <svg class="icon" aria-hidden="true">
             <use href="#i-check" />
-          </svg><span>Account created. Please sign in.</span></div>
-        <div class="auth-alert" id="formError" role="alert" hidden><svg class="icon" aria-hidden="true">
+          </svg><span>Account created. Please sign in.</span>
+        </div>
+        <div class="auth-alert" id="formError" role="alert" hidden>
+          <svg class="icon" aria-hidden="true">
             <use href="#i-alert" />
-          </svg><span></span></div>
+          </svg><span></span>
+        </div>
         <form data-auth="login" novalidate>
           <div class="auth-field">
             <label for="email">Email</label>
-            <div class="field"><svg class="icon" aria-hidden="true">
+            <div class="field">
+              <svg class="icon" aria-hidden="true">
                 <use href="#i-mail" />
               </svg><input class="input" id="email" name="email" type="email" autocomplete="email"
-                placeholder="you@company.com" required data-rule="email" aria-describedby="email-err"></div>
-            <p class="auth-error" id="email-err" hidden><svg class="icon" aria-hidden="true">
+                placeholder="you@company.com" required data-rule="email" aria-describedby="email-err" />
+            </div>
+            <p class="auth-error" id="email-err" hidden>
+              <svg class="icon" aria-hidden="true">
                 <use href="#i-alert" />
-              </svg><span></span></p>
+              </svg><span></span>
+            </p>
           </div>
           <div class="auth-field">
             <label for="password">Password</label>
-            <div class="field field--pw"><svg class="icon" aria-hidden="true">
+            <div class="field field--pw">
+              <svg class="icon" aria-hidden="true">
                 <use href="#i-lock" />
               </svg><input class="input" id="password" name="password" type="password" autocomplete="current-password"
-                placeholder="Enter your password" required data-rule="password" aria-describedby="password-err"><button
-                type="button" class="pw-toggle" data-toggle-pw="password" aria-label="Show password"
-                aria-pressed="false"><svg class="icon" aria-hidden="true">
+                placeholder="Enter your password" required data-rule="password"
+                aria-describedby="password-err" /><button type="button" class="pw-toggle" data-toggle-pw="password"
+                aria-label="Show password" aria-pressed="false">
+                <svg class="icon" aria-hidden="true">
                   <use href="#i-eye" />
-                </svg></button></div>
-            <p class="auth-error" id="password-err" hidden><svg class="icon" aria-hidden="true">
+                </svg>
+              </button>
+            </div>
+            <p class="auth-error" id="password-err" hidden>
+              <svg class="icon" aria-hidden="true">
                 <use href="#i-alert" />
-              </svg><span></span></p>
+              </svg><span></span>
+            </p>
           </div>
           <div class="auth-row">
-            <label class="auth-check"><input type="checkbox" name="remember"><span>Remember me</span></label>
+            <label class="auth-check"><input type="checkbox" name="remember" /><span>Remember me</span></label>
             <a href="#" data-forgot>Forgot password?</a>
           </div>
-          <button type="submit" class="btn btn-primary auth-submit">Sign in</button>
+          <button type="submit" class="btn btn-primary auth-submit">
+            Sign in
+          </button>
         </form>
-        <p class="auth-switch">New to Eninrac? <a href="register.html">Create an account</a></p>
+        <p class="auth-switch">
+          New to Eninrac? <a href="register.html">Create an account</a>
+        </p>
       </div>
     </section>
   </main>
